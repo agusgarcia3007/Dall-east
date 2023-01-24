@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
-import { generateImage } from '../utils/fetchingFunctions'
+import { generateImage, handleShare } from '../utils/fetchingFunctions'
 import { FormField, Loader } from '../components'
 
 const CreatePost = () => {
@@ -11,12 +11,12 @@ const CreatePost = () => {
   const [form, setForm] = useState({
     name: '',
     prompt: '',
-    photo: ''
+    image: ''
   })
   const [generatingImg, setGeneratingImg] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [hasGeneratedImg, setHasGeneratedImg] = useState(false)
 
-  const handleSubmit = () => {}
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -37,7 +37,9 @@ const CreatePost = () => {
         </div>
       </div>
 
-      <form className='mt-16 max-w-3xl ' onSubmit={handleSubmit}>
+      <form
+        className='mt-16 max-w-3xl '
+        onSubmit={(e) => handleShare(e, form, setLoading, navigate)}>
         <div className='flex flex-col gap-5'>
           <FormField
             labelName='Your name'
@@ -58,14 +60,14 @@ const CreatePost = () => {
             handleSurpriseMe={handleSurpriseMe}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !generatingImg) {
-                generateImage(setGeneratingImg, form, setForm)
+                generateImage(setGeneratingImg, form, setForm, setHasGeneratedImg)
               }
             }}
           />
 
           <div className='relative mx-auto sm:mx-0 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center'>
-            {form.photo ? (
-              <img src={form.photo} alt={form.prompt} className='w-full h-full object-contain' />
+            {form.image ? (
+              <img src={form.image} alt={form.prompt} className='w-full h-full object-contain' />
             ) : (
               <img
                 src={preview}
@@ -86,21 +88,24 @@ const CreatePost = () => {
           <button
             type='button'
             disabled={generatingImg}
-            onClick={() => generateImage(setGeneratingImg, form, setForm)}
+            onClick={() => generateImage(setGeneratingImg, form, setForm, setHasGeneratedImg)}
             className='text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
         </div>
-        {/* <div className='mt-10'>
-          <p className='mt-2 text-[#666e75] text-[14px]'>
-            Once you have created the image you want, you can share it with others in the community
-          </p>
-          <button
-            type='submit'
-            className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center'>
-            {loading ? 'Sharing...' : 'Share'}
-          </button>
-        </div> */}
+        {hasGeneratedImg && (
+          <div className='mt-10'>
+            <p className='mt-2 ml-3 text-[#666e75] text-[14px]'>
+              Want to share it with the community?
+            </p>
+            <button
+              type='submit'
+              disabled={loading}
+              className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
+              {loading ? 'Sharing...' : 'Share'}
+            </button>
+          </div>
+        )}
       </form>
     </section>
   )

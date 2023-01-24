@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Loader, Card, FormField, RenderCards } from '../components'
+import { getPosts } from '../utils/fetchingFunctions'
 
 const Home = () => {
   const [loading, setLoading] = useState(false)
   const [allPosts, setAllPosts] = useState(null)
   const [searchText, setSearchText] = useState('')
+
+  useEffect(() => {
+    getPosts(setLoading, setAllPosts)
+  }, [])
 
   return (
     <section className='max-w-7xl mx-auto'>
@@ -36,7 +41,7 @@ const Home = () => {
               {searchText ? (
                 <RenderCards data={[]} title='No results found' />
               ) : (
-                <RenderCards data={[]} title='No posts found' />
+                <RenderCards data={allPosts} title='No posts found' />
               )}
             </div>
           </>
