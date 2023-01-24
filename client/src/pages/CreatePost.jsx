@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
+import { generateImage } from '../utils/fetchingFunctions'
 import { FormField, Loader } from '../components'
 
 const CreatePost = () => {
@@ -22,32 +23,6 @@ const CreatePost = () => {
   const handleSurpriseMe = () => {
     const randomPrompt = getRandomPrompt(form.prompt)
     setForm({ ...form, prompt: randomPrompt })
-  }
-  const generateImage = async () => {
-    if (form.prompt) {
-      try {
-        setGeneratingImg(true)
-        const resopnse = await fetch(`${import.meta.env.VITE_API_URL}/dalle`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: form.prompt })
-        })
-        const data = await resopnse.json()
-        console.log('generating image')
-
-        setForm({ ...form, photo: `data:image/png;base64,${data.image}` })
-      } catch (error) {
-        if (import.meta.env.VITE_API_URL.includes('localhost')) {
-          console.log(error)
-        }
-      } finally {
-        setGeneratingImg(false)
-      }
-    } else {
-      alert('Please enter a prompt')
-    }
   }
 
   return (
@@ -83,7 +58,7 @@ const CreatePost = () => {
             handleSurpriseMe={handleSurpriseMe}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !generatingImg) {
-                generateImage()
+                generateImage(setGeneratingImg, form, setForm)
               }
             }}
           />
@@ -111,7 +86,7 @@ const CreatePost = () => {
           <button
             type='button'
             disabled={generatingImg}
-            onClick={generateImage}
+            onClick={() => generateImage(setGeneratingImg, form, setForm)}
             className='text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
