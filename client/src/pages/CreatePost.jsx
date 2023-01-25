@@ -4,6 +4,7 @@ import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
 import { generateImage, handleShare } from '../utils/fetchingFunctions'
 import { FormField, Loader } from '../components'
+import { ToastContainer } from 'react-toastify'
 
 const CreatePost = () => {
   const navigate = useNavigate()
@@ -106,6 +107,19 @@ const CreatePost = () => {
           </div>
         )}
       </form>
+
+      <ToastContainer
+        position='bottom-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='light'
+      />
     </section>
   )
 }

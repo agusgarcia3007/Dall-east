@@ -1,3 +1,17 @@
+import { toast } from 'react-toastify'
+
+const notify = (msg) => {
+  toast.error(msg, {
+    position: 'bottom-center',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined
+  })
+}
+
 export const generateImage = async (setGeneratingImg, form, setForm, setHasGeneratedImg) => {
   if (form.prompt) {
     setHasGeneratedImg(false)
@@ -16,12 +30,12 @@ export const generateImage = async (setGeneratingImg, form, setForm, setHasGener
       setHasGeneratedImg(true)
     } catch (error) {
       if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
-      // TODO: Add error handling
+      notify(error.message)
     } finally {
       setGeneratingImg(false)
     }
   } else {
-    alert('Please enter a prompt')
+    notify('Please enter a prompt')
   }
 }
 
@@ -43,12 +57,12 @@ export const handleShare = async (e, form, setLoading, navigate) => {
       navigate('/')
     } catch (error) {
       if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
-      // need to add error alerts
+      notify(error.message)
     } finally {
       setLoading(false)
     }
   } else {
-    // need to add error alerts saying 'please fill out all fields'
+    notify('Please fill out all fields')
   }
 }
 
@@ -66,6 +80,6 @@ export const getPosts = async (setAllPosts) => {
     }
   } catch (error) {
     if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
-    // TODO: Add error handling
+    notify(error.message)
   }
 }

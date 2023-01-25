@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Loader, FormField, RenderCards } from '../components'
 import { cacheImages } from '../utils'
 import { getPosts } from '../utils/fetchingFunctions'
+import { ToastContainer } from 'react-toastify'
 
 const Home = () => {
   const [loading, setLoading] = useState(false)
@@ -52,7 +53,7 @@ const Home = () => {
         </p>
       </div>
 
-      <div className='mt-16'>
+      <div className='mt-12 sm:mt-16'>
         <FormField
           labelName='Search posts'
           type='text'
@@ -85,6 +86,18 @@ const Home = () => {
           </>
         )}
       </div>
+      <ToastContainer
+        position='bottom-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='light'
+      />
     </section>
   )
 }
