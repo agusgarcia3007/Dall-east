@@ -19,7 +19,7 @@ const CreatePost = () => {
   const [hasGeneratedImg, setHasGeneratedImg] = useState(false)
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setForm({ ...form, [e.target.name]: e.target.value.toLowerCase() })
   }
   const handleSurpriseMe = () => {
     const randomPrompt = getRandomPrompt(form.prompt)

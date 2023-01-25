@@ -17,19 +17,25 @@ export const generateImage = async (setGeneratingImg, form, setForm, setHasGener
     setHasGeneratedImg(false)
     try {
       setGeneratingImg(true)
-      const resopnse = await fetch(`${import.meta.env.VITE_API_URL}/dalle`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/dalle`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ prompt: form.prompt })
       })
-      const data = await resopnse.json()
+      if (response.ok) {
+        const data = await response.json()
 
-      setForm({ ...form, image: `data:image/png;base64,${data.image}` })
-      setHasGeneratedImg(true)
+        setForm({ ...form, image: `data:image/png;base64,${data.image}` })
+        setHasGeneratedImg(true)
+      } else {
+        notify(
+          'Your request was rejected as a result of our safety system. Your prompt may contain text that is not allowed by our safety system.'
+        )
+      }
     } catch (error) {
-      if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
+      if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error.message)
       notify(error.message)
     } finally {
       setGeneratingImg(false)

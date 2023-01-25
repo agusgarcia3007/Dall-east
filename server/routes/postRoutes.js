@@ -40,8 +40,7 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/search', async (req, res) => {
-  const { query } = req.query
-  const { page } = req.query
+  const { query, page } = req.query
   const limit = 15
 
   try {
@@ -49,7 +48,7 @@ router.get('/search', async (req, res) => {
 
     if (query) {
       posts = await Post.find({
-        prompt: { $regex: query.toLowerCase() }
+        $or: [{ prompt: { $regex: query } }, { name: { $regex: query } }, { name: query }]
       })
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
