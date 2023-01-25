@@ -13,3 +13,16 @@ export const getRandomPrompt = (prompt) => {
 export const downloadImage = async (_id, image) => {
   FileSaver.saveAs(image, `download-${_id}.png`)
 }
+
+export const cacheImages = async (images) => {
+  const promises = images.map((image) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.src = image
+      img.onload = resolve()
+      img.onerror = reject()
+    })
+  })
+
+  return Promise.all(promises)
+}

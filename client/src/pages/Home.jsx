@@ -1,14 +1,45 @@
 import { useState, useEffect } from 'react'
-import { Loader, Card, FormField, RenderCards } from '../components'
+import { Loader, FormField, RenderCards } from '../components'
+import { cacheImages } from '../utils'
 import { getPosts } from '../utils/fetchingFunctions'
 
 const Home = () => {
   const [loading, setLoading] = useState(false)
   const [allPosts, setAllPosts] = useState(null)
+  const [allImages, setAllImages] = useState([])
   const [searchText, setSearchText] = useState('')
+  const [searchedResults, setSearchedResults] = useState(null)
+  const [searchTimeout, setSearchTimeout] = useState(null)
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout)
+    setSearchText(e.target.value)
+
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = allPosts.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        )
+        setSearchedResults(searchResult)
+      }, 500)
+    )
+  }
+
+  const initialFetch = async () => {
+    setLoading(true)
+    await getPosts(setAllPosts)
+    await cacheImages(allImages)
+    setLoading(false)
+  }
+  useEffect(() => {
+    const allImages = allPosts?.map((post) => post.image)
+    setAllImages(allImages)
+  }, [allPosts])
 
   useEffect(() => {
-    getPosts(setLoading, setAllPosts)
+    initialFetch()
   }, [])
 
   return (
@@ -22,7 +53,14 @@ const Home = () => {
       </div>
 
       <div className='mt-16'>
-        <FormField />
+        <FormField
+          labelName='Search posts'
+          type='text'
+          name='text'
+          placeholder='Search posts'
+          value={searchText}
+          handleChange={handleSearchChange}
+        />
       </div>
 
       <div className='mt-10'>
@@ -39,7 +77,7 @@ const Home = () => {
             )}
             <div className='grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3'>
               {searchText ? (
-                <RenderCards data={[]} title='No results found' />
+                <RenderCards data={searchedResults} title='No results found' />
               ) : (
                 <RenderCards data={allPosts} title='No posts found' />
               )}

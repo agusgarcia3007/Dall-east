@@ -65,7 +65,7 @@ const CreatePost = () => {
             }}
           />
 
-          <div className='relative mx-auto sm:mx-0 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center'>
+          <div className='relative mx-auto sm:mx-0 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-72 p-3 h-72 flex justify-center items-center'>
             {form.image ? (
               <img src={form.image} alt={form.prompt} className='w-full h-full object-contain' />
             ) : (
@@ -93,11 +93,10 @@ const CreatePost = () => {
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
         </div>
+
         {hasGeneratedImg && (
           <div className='mt-10'>
-            <p className='mt-2 ml-3 text-[#666e75] text-[14px]'>
-              Want to share it with the community?
-            </p>
+            <p className='mt-2 text-[#666e75] text-[14px]'>Want to share it with the community?</p>
             <button
               type='submit'
               disabled={loading}

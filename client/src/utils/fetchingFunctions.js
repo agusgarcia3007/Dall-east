@@ -52,9 +52,7 @@ export const handleShare = async (e, form, setLoading, navigate) => {
   }
 }
 
-export const getPosts = async (setLoading, setAllPosts) => {
-  setLoading(true)
-
+export const getPosts = async (setAllPosts) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
       method: 'GET',
@@ -69,7 +67,5 @@ export const getPosts = async (setLoading, setAllPosts) => {
   } catch (error) {
     if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
     // TODO: Add error handling
-  } finally {
-    setLoading(false)
   }
 }
