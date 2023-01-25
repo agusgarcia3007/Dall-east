@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Loader, FormField, RenderCards } from '../components'
+import { Loader, FormField, RenderCards, Pagination } from '../components'
 import { cacheImages } from '../utils'
-import { getPosts } from '../utils/fetchingFunctions'
+import { getPosts, searchPosts } from '../utils/fetchingFunctions'
 import { ToastContainer } from 'react-toastify'
 
 const Home = () => {
@@ -12,25 +12,36 @@ const Home = () => {
   const [searchedResults, setSearchedResults] = useState(null)
   const [searchTimeout, setSearchTimeout] = useState(null)
 
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalResults: 0
+  })
+  const postsPerPage = 15
+
+  const indexOfLastPost = pagination.currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+
   const handleSearchChange = (e) => {
     clearTimeout(searchTimeout)
     setSearchText(e.target.value)
 
     setSearchTimeout(
-      setTimeout(() => {
-        const searchResult = allPosts.filter(
-          (item) =>
-            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.prompt.toLowerCase().includes(searchText.toLowerCase())
-        )
-        setSearchedResults(searchResult)
+      setTimeout(async () => {
+        const results = await searchPosts(searchText)
+        setSearchedResults(results.data)
+        setPagination({
+          currentPage: results.pagination.currentPage,
+          totalPages: results.pagination.totalPages,
+          totalResults: results.pagination.totalResults
+        })
       }, 500)
     )
   }
 
   const initialFetch = async () => {
     setLoading(true)
-    await getPosts(setAllPosts)
+    await getPosts(setAllPosts, pagination.currentPage, setPagination)
     await cacheImages(allImages)
     setLoading(false)
   }
@@ -41,7 +52,7 @@ const Home = () => {
 
   useEffect(() => {
     initialFetch()
-  }, [])
+  }, [pagination.currentPage])
 
   return (
     <section className='max-w-7xl mx-auto'>
@@ -97,6 +108,12 @@ const Home = () => {
         draggable
         pauseOnHover
         theme='light'
+      />
+      <Pagination
+        indexOfFirstPost={indexOfFirstPost}
+        indexOfLastPost={indexOfLastPost}
+        setPagination={setPagination}
+        pagination={pagination}
       />
     </section>
   )

@@ -66,9 +66,9 @@ export const handleShare = async (e, form, setLoading, navigate) => {
   }
 }
 
-export const getPosts = async (setAllPosts) => {
+export const getPosts = async (setAllPosts, currentPage, setPagination) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/posts?page=${currentPage}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -76,10 +76,31 @@ export const getPosts = async (setAllPosts) => {
     })
     if (response.ok) {
       const result = await response.json()
-      setAllPosts(result.data.reverse())
+      setAllPosts(result.data)
+      setPagination(result.pagination)
     }
   } catch (error) {
     if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
     notify(error.message)
+  }
+}
+
+export const searchPosts = async (searchText) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/posts/search?query=${searchText}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (response.ok) {
+      const result = await response.json()
+      return await result
+    }
+  } catch (error) {
+    if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
   }
 }

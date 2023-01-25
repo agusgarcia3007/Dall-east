@@ -14,9 +14,69 @@ cloudinary.config({
 })
 
 router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page)
+  const limit = 15
+
   try {
-    const posts = await Post.find({})
-    res.status(200).json({ success: true, data: posts })
+    const totalResults = await Post.countDocuments()
+    const totalPages = Math.ceil(totalResults / limit)
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec()
+    res.status(200).json({
+      success: true,
+      data: posts,
+      pagination: {
+        totalPages,
+        currentPage: page ?? 1,
+        totalResults
+      }
+    })
+  } catch (error) {
+    res.status(500).json({ success: false, message: error })
+  }
+})
+
+router.get('/search', async (req, res) => {
+  const { query } = req.query
+  const { page } = req.query
+  const limit = 15
+
+  try {
+    let posts = []
+
+    if (query) {
+      posts = await Post.find({
+        prompt: { $regex: query.toLowerCase() }
+      })
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec()
+    } else {
+      posts = await Post.find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec()
+    }
+
+    const totalResults = await Post.countDocuments({
+      prompt: { $regex: query.toLowerCase() }
+    })
+    const totalPages = Math.ceil(totalResults / limit)
+
+    res.status(200).json({
+      success: true,
+      data: posts,
+      pagination: {
+        totalPages,
+        currentPage: page ?? 1,
+        totalResults
+      }
+    })
   } catch (error) {
     res.status(500).json({ success: false, message: error })
   }
