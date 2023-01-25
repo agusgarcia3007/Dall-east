@@ -23,6 +23,7 @@ const Home = () => {
   const indexOfFirstPost = indexOfLastPost - postsPerPage
 
   const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout)
     setSearchText(e.target.value)
 
     setSearchTimeout(
