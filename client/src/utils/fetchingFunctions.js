@@ -110,3 +110,25 @@ export const searchPosts = async (searchText) => {
     if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
   }
 }
+
+export const getUserPosts = async (setUserPosts, user, currentPage, setPagination) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/posts/${user?.nickname || user}?page=${currentPage}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (response.ok) {
+      const result = await response.json()
+      setUserPosts(result.data)
+      setPagination(result.pagination)
+    }
+  } catch (error) {
+    if (import.meta.env.VITE_API_URL.includes('localhost')) console.log(error)
+    notify(error.message)
+  }
+}

@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
+
 import { logo } from '../assets'
+import DropDown from './DropDown'
 
 const Header = () => {
   const { pathname } = useLocation()
@@ -10,13 +12,17 @@ const Header = () => {
         <img src={logo} alt='logo' draggable={false} className='w-28 object-contain' />
       </Link>
 
-      {pathname !== '/create-post' ? (
-        <Link
-          to='create-post'
-          className='font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md'>
-          Create
-        </Link>
-      ) : null}
+      <div className='flex gap-x-3'>
+        {pathname !== '/create-post' ? (
+          <Link
+            to='create-post'
+            className='font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md'>
+            Create
+          </Link>
+        ) : null}
+
+        <DropDown pathname={pathname} />
+      </div>
     </header>
   )
 }

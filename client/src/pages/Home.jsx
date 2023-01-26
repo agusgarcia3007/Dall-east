@@ -24,7 +24,7 @@ const Home = () => {
 
   const handleSearchChange = (e) => {
     clearTimeout(searchTimeout)
-    setSearchText(e.target.value)
+    setSearchText(e.target.value.toLowerCase())
 
     setSearchTimeout(
       setTimeout(async () => {
@@ -67,7 +67,7 @@ const Home = () => {
       <div className='mt-12 sm:mt-16'>
         <FormField
           labelName='Search posts'
-          type='text'
+          type='search'
           name='text'
           placeholder='Search posts'
           value={searchText}

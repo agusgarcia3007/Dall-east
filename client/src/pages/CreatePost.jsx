@@ -5,14 +5,18 @@ import { getRandomPrompt } from '../utils'
 import { generateImage, handleShare } from '../utils/fetchingFunctions'
 import { FormField, Loader } from '../components'
 import { ToastContainer } from 'react-toastify'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useEffect } from 'react'
 
 const CreatePost = () => {
   const navigate = useNavigate()
+  const { user, isAuthenticated, loginWithPopup } = useAuth0()
 
   const [form, setForm] = useState({
     name: '',
     prompt: '',
-    image: ''
+    image: '',
+    avatar: ''
   })
   const [generatingImg, setGeneratingImg] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -25,6 +29,12 @@ const CreatePost = () => {
     const randomPrompt = getRandomPrompt(form.prompt)
     setForm({ ...form, prompt: randomPrompt })
   }
+
+  useEffect(() => {
+    if (user?.nickname) {
+      setForm({ ...form, name: user?.nickname, avatar: user?.picture })
+    }
+  }, [user])
 
   return (
     <section className='max-w-7xl mx-auto'>
@@ -39,17 +49,9 @@ const CreatePost = () => {
       </div>
 
       <form
-        className='mt-16 max-w-3xl '
+        className='mt-8 max-w-3xl '
         onSubmit={(e) => handleShare(e, form, setLoading, navigate)}>
-        <div className='flex flex-col gap-5'>
-          <FormField
-            labelName='Your name'
-            type='text'
-            name='name'
-            placeholder='John Doe'
-            value={form.name}
-            handleChange={handleChange}
-          />
+        <div className='flex flex-col gap-8'>
           <FormField
             labelName='Prompt'
             type='text'
@@ -98,12 +100,22 @@ const CreatePost = () => {
         {hasGeneratedImg && (
           <div className='mt-10'>
             <p className='mt-2 text-[#666e75] text-[14px]'>Want to share it with the community?</p>
-            <button
-              type='submit'
-              disabled={loading}
-              className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
-              {loading ? 'Sharing...' : 'Share'}
-            </button>
+            {isAuthenticated ? (
+              <button
+                type='submit'
+                disabled={loading}
+                className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
+                {loading ? 'Sharing...' : 'Share'}
+              </button>
+            ) : (
+              <button
+                type='button'
+                onClick={() => loginWithPopup()}
+                disabled={loading}
+                className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
+                Login to share your art
+              </button>
+            )}
           </div>
         )}
       </form>

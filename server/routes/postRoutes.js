@@ -39,6 +39,36 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/:user', async (req, res) => {
+  const { user } = req.params
+  const { page } = parseInt(req.query)
+  const limit = 15
+
+  try {
+    // we need to find all the posts that have the user's name
+    const userPosts = await Post.find({ name: user })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec()
+
+    const totalResults = await Post.countDocuments({ name: user })
+    const totalPages = Math.ceil(totalResults / limit)
+
+    res.status(200).json({
+      success: true,
+      data: userPosts,
+      pagination: {
+        totalPages,
+        currentPage: page ?? 1,
+        totalResults
+      }
+    })
+  } catch (error) {
+    res.status(500).json({ success: false, message: error })
+  }
+})
+
 router.get('/search', async (req, res) => {
   const { query, page } = req.query
   const limit = 15
@@ -83,13 +113,15 @@ router.get('/search', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { name, prompt, image } = req.body
+    const { name, prompt, image, avatar } = req.body
     const imageUrl = await cloudinary.uploader.upload(image)
+    const avatarUrl = await cloudinary.uploader.upload(avatar)
 
     const newPost = await Post.create({
       name,
       prompt,
-      image: imageUrl.url
+      image: imageUrl.url,
+      avatar: avatarUrl.url
     })
 
     res.status(201).json({ success: true, data: newPost })
