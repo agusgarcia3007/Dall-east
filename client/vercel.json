@@ -1,3 +1,10 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/404.jsx" }]
+  "routes": [
+    { "src": "/[^.]+", "dest": "/", "status": 200 },
+    {
+      "src": "/(.*)",
+      "dest": "/404",
+      "status": 404
+    }
+  ]
 }
