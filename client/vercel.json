@@ -3,7 +3,7 @@
     { "src": "/[^.]+", "dest": "/", "status": 200 },
     {
       "src": "/(.*)",
-      "dest": "/404.html",
+      "dest": "/404.jsx",
       "status": 404
     }
   ]
