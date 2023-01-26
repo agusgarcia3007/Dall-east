@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Home, CreatePost, Feed, NotFound } from './pages'
+import { Home, CreatePost, Feed } from './pages'
+import NotFound from './404'
 import MainLayout from './layouts/MainLayout'
 
 const App = () => {
