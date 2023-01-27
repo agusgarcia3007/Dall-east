@@ -14,7 +14,12 @@ const DropDown = ({ pathname }) => {
       pathname === '/create-post' ? loginWithPopup() : loginWithRedirect()
     }
   }
-  if (isLoading) return null
+  if (isLoading)
+    return (
+      <div className='absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] '>
+        <Loader />
+      </div>
+    )
 
   return (
     <Menu as='div' className='relative flex items-center'>
