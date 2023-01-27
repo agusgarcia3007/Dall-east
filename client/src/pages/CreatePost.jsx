@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 
 const CreatePost = () => {
   const navigate = useNavigate()
-  const { user, isAuthenticated, loginWithPopup } = useAuth0()
+  const { user, isAuthenticated, loginWithPopup, getAccessTokenSilently } = useAuth0()
 
   const [form, setForm] = useState({
     name: '',
@@ -48,9 +48,7 @@ const CreatePost = () => {
         </div>
       </div>
 
-      <form
-        className='mt-8 max-w-3xl '
-        onSubmit={(e) => handleShare(e, form, setLoading, navigate)}>
+      <div className='mt-8 max-w-3xl '>
         <div className='flex flex-col gap-8'>
           <FormField
             labelName='Prompt'
@@ -104,6 +102,7 @@ const CreatePost = () => {
               <button
                 type='submit'
                 disabled={loading}
+                onClick={(e) => handleShare(e, form, setLoading, navigate)}
                 className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-400'>
                 {loading ? 'Sharing...' : 'Share'}
               </button>
@@ -118,7 +117,7 @@ const CreatePost = () => {
             )}
           </div>
         )}
-      </form>
+      </div>
 
       <ToastContainer
         position='bottom-center'
