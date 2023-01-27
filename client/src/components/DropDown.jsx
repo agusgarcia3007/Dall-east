@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { profile } from '../assets'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Link } from 'react-router-dom'
-import { Loader } from './Loader'
+import Loader from './Loader'
 
 const DropDown = ({ pathname }) => {
   const { loginWithRedirect, loginWithPopup, logout, user, isAuthenticated, isLoading } = useAuth0()
